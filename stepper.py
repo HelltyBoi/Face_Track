@@ -14,8 +14,6 @@ stepper_seq = [[1,0,0,0],
                [1,0,0,1]]
 
 GPIO.setmode(GPIO.BCM)
-
-
     
 def clockwise_x(speed):
     
