@@ -1,3 +1,5 @@
+#collaborative work of f.matkovic and m.vukovic
+
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 from threading import Thread
