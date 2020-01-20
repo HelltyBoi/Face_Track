@@ -5,13 +5,14 @@ import time
 import numpy
 import stepper
 
+
 RES_CONST = 1
 
 face_cascade = cv2.CascadeClassifier("/usr/local/lib/python3.7/dist-packages/cv2/data/haarcascade_frontalface_default.xml")
 
 camera = PiCamera()
 camera.resolution = (640*RES_CONST, 480*RES_CONST)
-camera.framerate = 32
+camera.framerate = 50
 rawCapture = PiRGBArray(camera, size=(640*RES_CONST, 480*RES_CONST))
 
 time.sleep(0.1)
@@ -19,6 +20,7 @@ time.sleep(0.1)
 for image in camera.capture_continuous(rawCapture, format="bgr", use_video_port = True):
     frame = image.array
     
+    #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces=face_cascade.detectMultiScale(frame, scaleFactor=1.25, minNeighbors = 5)
     
     if len(faces)>0:
@@ -26,8 +28,8 @@ for image in camera.capture_continuous(rawCapture, format="bgr", use_video_port 
         x_position = frame.shape[1]/2 - (faces[0][0] + faces[0][2]/2)
         y_position = frame.shape[0]/2 - (faces[0][1] + faces[0][3]/2)
         
-        print(x_position)
-        print(y_position)
+        #print(x_position)
+        #print(y_position)
         
         x_center = int(faces[0][0] + faces[0][2]/2)
         y_center = int(faces[0][1] + faces[0][3]/2)
@@ -50,16 +52,17 @@ for image in camera.capture_continuous(rawCapture, format="bgr", use_video_port 
             if x_position <= 20 and x_position >= -20:
                 frame = cv2.line(frame, (x_center,0),(x_center, frame.shape[1]), (0,255,0), 1)
             else:
-                frame = cv2.line(frame, (x_center,0),(x_center, frame.shape[1]), (0,0,255), 1) 
-            
-            if y_position > 20 :
-                stepper.counterclockwise_y(500)
-            elif x_position > 20 :
-                stepper.counterclockwise_x(500)
-            elif x_position < -20 :
-                stepper.clockwise_x(500)
-            elif y_position < -20 :
-                stepper.clockwise_y(500)
+                frame = cv2.line(frame, (x_center,0),(x_center, frame.shape[1]), (0,0,255), 1)
+                
+            for i in range(4):
+                if y_position > 5 :
+                    stepper.up(1000)
+                if x_position > 5 :
+                    stepper.left(1000)
+                if x_position < -5 :
+                    stepper.right(1000)
+                if y_position < -5 :
+                    stepper.down(1000)
         else:
     
             for x,y,w,h in faces:

@@ -15,7 +15,7 @@ stepper_seq = [[1,0,0,0],
 
 GPIO.setmode(GPIO.BCM)
     
-def clockwise_x(speed):
+def left(speed):
     
     for i in range(4):
         GPIO.setup(pinsx[i],GPIO.OUT)
@@ -30,7 +30,7 @@ def clockwise_x(speed):
         GPIO.cleanup(pinsx[i])
         GPIO.cleanup(pinsy[i])
         
-def counterclockwise_x(speed):
+def right(speed):
     
     for i in range(4):
         GPIO.setup(pinsx[i],GPIO.OUT)
@@ -45,7 +45,7 @@ def counterclockwise_x(speed):
         GPIO.cleanup(pinsx[i])
         GPIO.cleanup(pinsy[i])
         
-def clockwise_y(speed):
+def down(speed):
     
     for i in range(4):
         GPIO.setup(pinsx[i],GPIO.OUT)
@@ -60,7 +60,7 @@ def clockwise_y(speed):
         GPIO.cleanup(pinsx[i])
         GPIO.cleanup(pinsy[i])
 
-def counterclockwise_y(speed):
+def up(speed):
     
     for i in range(4):
         GPIO.setup(pinsx[i],GPIO.OUT)
@@ -74,9 +74,10 @@ def counterclockwise_y(speed):
     for i in range(4):
         GPIO.cleanup(pinsx[i])
         GPIO.cleanup(pinsy[i])
-        
-counterclockwise_y(20)
-counterclockwise_x(20)
-clockwise_y(20)
-clockwise_x(20)
+      
+up(20)
+left(20)
+    
+down(20)
+left(20)
             
