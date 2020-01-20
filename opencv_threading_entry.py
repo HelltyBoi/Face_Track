@@ -41,10 +41,10 @@ def face_det():
             x_center = int(faces[0][0] + faces[0][2]/2)
             y_center = int(faces[0][1] + faces[0][3]/2)
         
-            if item_dict['y_position'] > 20 or
-            item_dict['x_position'] > 20 or
-            item_dict['x_position'] < -20 or
-            item_dict['y_position'] < -20 :
+            if (item_dict['y_position'] > 20 or
+                item_dict['x_position'] > 20 or
+                item_dict['x_position'] < -20 or
+                item_dict['y_position'] < -20 ):
             
                 for x,y,w,h in faces :
                     frame = cv2.rectangle(frame, (x,y), (x+w,y+h), (0,0,255), 3)
