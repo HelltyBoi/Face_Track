@@ -9,7 +9,6 @@ import numpy
 import stepper
 
 
-
 RES_CONST = 1
 STEPPER_SPEED=500
 
