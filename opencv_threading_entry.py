@@ -7,10 +7,11 @@ import cv2
 import time
 import numpy
 import stepper
+#import gyro
 
 
 RES_CONST = 1
-STEPPER_SPEED=500
+STEPPER_SPEED = 500
 
 item_dict={'x_position':0.0, 'y_position':0.0}
 
@@ -18,7 +19,7 @@ face_cascade = cv2.CascadeClassifier("/usr/local/lib/python3.7/dist-packages/cv2
 
 camera = PiCamera()
 camera.resolution = (640*RES_CONST, 480*RES_CONST)
-camera.framerate = 40
+camera.framerate = 40 
 rawCapture = PiRGBArray(camera, size=(640*RES_CONST, 480*RES_CONST))
 
 time.sleep(0.1)
@@ -28,7 +29,7 @@ def face_det():
         frame = image.array
     
         #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces=face_cascade.detectMultiScale(frame, scaleFactor=1.45, minNeighbors = 5)
+        faces=face_cascade.detectMultiScale(frame, scaleFactor=1.25, minNeighbors = 5)
     
         if len(faces)>0:
         
@@ -40,7 +41,8 @@ def face_det():
                     
             x_center = int(faces[0][0] + faces[0][2]/2)
             y_center = int(faces[0][1] + faces[0][3]/2)
-        
+            
+            #condition operator differentiates weather face is at the centre of a frame
             if (item_dict['y_position'] > 20 or
                 item_dict['x_position'] > 20 or
                 item_dict['x_position'] < -20 or
@@ -70,6 +72,7 @@ def face_det():
                     item_dict['x_position'] = 0.0
                     item_dict['y_position'] = 0.0
         
+        #if there is no face detected set positon to 0 as if face is in the centre so steppers wouldn't move
         else:
             
             item_dict['x_position'] = 0.0
@@ -87,9 +90,11 @@ def face_det():
     cv2.destroyAllWindows()
         
 def check_position():
-    
+    x_track = 0
+    y_track = 0
     while(1):
         
+        #if face is close to the centre of the frame dampen the steppers speed to prevent stepper oscilation
         if (item_dict['y_position'] < 100 and
             item_dict['x_position'] < 100 and
             item_dict['x_position'] > -100 and
@@ -97,25 +102,34 @@ def check_position():
             
             time.sleep(0.05)
 
-        STEPPER_SPEED=900
+        STEPPER_SPEED = 700
         
-        print(item_dict['x_position'])
-        print(item_dict['y_position'])
+        #print(item_dict['x_position'])
+        #print(item_dict['y_position'])
         
         if item_dict['y_position'] > 20 :
             stepper.up(STEPPER_SPEED)
+            y_track+=1
         if item_dict['x_position'] > 20 :
             stepper.left(STEPPER_SPEED)
+            x_track-=1
         if item_dict['x_position'] < -20 :
             stepper.right(STEPPER_SPEED)
+            x_track+=1
         if item_dict['y_position'] < -20 :
-            stepper.down(STEPPER_SPEED)      
+            stepper.down(STEPPER_SPEED)
+            y_track-=1
             
+        print(x_track)
+        print(y_track)
+        
 if __name__ == '__main__':
 
     p=Thread(target=check_position)
     o=Thread(target=face_det)
+
     p.start()
     o.start()
+
     p.join()
     o.join()
